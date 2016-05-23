@@ -1,0 +1,219 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<article xmlns='http://docbook.org/ns/docbook' version='5.0' xml:lang='en'>
+
+Ruta crítica de un nuevo proyecto
+
+1. Crea un nuevo proyecto:
+
+[$] django-admin startproyect proyectos
+
+2. Inicia una nueva aplicación:
+
+[$] cd proyectos
+
+[$] python admin.py startapp agenda
+
+3. Configura la aplicación:
+
+[$] vi proyectos/settings.py
+
+SECRET_KEY = '....'
+
+DATABASES = {
+	'agenda' : {
+		'ENGINE' : 'django.db.backends.postgresql_psycopg2',
+		'NAME' : 'agenda',
+		'USER' : 'asarch',
+		'PASSWORD' : 'xxxx-xxxx',
+		'HOST' : '192.168.1.100',
+		'PORT' : '5432'
+
+	}
+}
+
+DATABASE_ROUTERS = ['projects.router.default']
+
+TIME_ZONE = 'Mexico/General'
+
+4. Definimos el router de las bases de datos:
+
+[$] vim proyectos/router.py
+
+# In settings.py, after the databases declaration:
+#
+# DATABASE_ROUTERS = ['projects.router.default']
+apps = [
+	'agenda',
+	'coleccion',
+	'imco',
+	'jafra',
+	'konigin',
+	'muebleria',
+	'muestra',
+	'slackbuild',
+]
+
+tables = [
+	# Agenda
+	'aniversario', 'cita', 'diario', 'enlace',
+	'etiqueta', 'expresion_idiomatica', 'idioma',
+	'nota', 'nota_etiqueta', 'tarea', 'tipo_aniversario',
+	'tipo_nota', 'tipo_tarea',
+
+	# Coleccion
+	'archivo', 'blu_ray', 'catalogo', 'contenido',
+	'disco', 'respaldo',
+
+	# Imco
+	'alumno', 'asistencia', 'evaluacion',
+
+	# Jafra
+	'categoria', 'cliente', 'pago', 'producto',
+	'venta', 'venta_producto',
+
+	# Konigin
+	'evento', 'comentario',
+
+	# Muebleria
+	'elemento', 'inventario', 'tipo_elemento'
+	
+	# Muestra
+	'glucosa', 'glucosa_comentario', 'paciente', 'presion',
+	
+	# Slackbuild
+	'archivo', 'listado', 'paquete', 'tipo_archivo',
+	'version_slackware'
+]
+
+class default(object):
+	def db_for_read(self, model, **hints):
+		if model._meta.app_label in apps:
+			return model._meta.app_label
+
+		return 'default'
+
+	def db_for_write(self, model, **hints):
+		if model._meta.app_label in apps:
+			return model._meta.app_label
+
+		return 'default'
+
+	def allow_relation(self, obj1, obj2, **hints):
+		if obj1._meta.app_label in apps and obj2._meta.app_label in apps:
+			return True
+		elif [obj1._meta.app_label, obj2._meta.app_label] not in apps:
+			return True
+
+		return False
+
+	# From
+	# /usr/lib/python2.7/site-packages/django/db/utils.py:358:
+	# RemovedInDjango19Warning:
+	# Router.allow_syncdb has been deprecated and will stop working in Django 1.9.
+	# Rename the method to allow_migrate.
+	#  model=model,
+	#def allow_syncdb(self, db, model):
+	def allow_migrate(self, db, model):
+		if db in tables or model._meta.app_label in apps:
+			return False
+
+		return True
+
+5. Obtenemos las tablas de la base de datos de la aplicación:
+
+[$] python manage.py inspectdb --database=agenda | sed 's/    /\t/g' >> agenda/models.py
+
+6. Habilitamos el módulo de la administración para la aplicación:
+
+# notebook/admin.py
+
+#---------------------------------------------------------------------
+#  Originalmente el codigo era este:
+#---------------------------------------------------------------------
+
+from django.contrib import admin
+from django.db.models.base import ModelBase
+
+#from pos import models as pos_models
+import models
+
+#for name,var in pos_models.__dict__.items():
+for name,var in models.__dict__.items():
+	if type(var) is ModelBase:
+		admin.site.register(var)
+
+#---------------------------------------------------------------------
+#  La forma mejorada es este ya que te permite personalizar
+#  la forma en que se muestra un modelo (en este caso, las
+#  notas del notebook).
+#---------------------------------------------------------------------
+
+from django.contrib import admin
+from django.db.models.base import ModelBase
+
+#from notebook import models as notebook_models
+import models
+
+from models import Nota
+
+# La personalizacion se hace aqui:
+class NotaAdmin(admin.ModelAdmin):
+	list_display = ('nombre', 'descripcion', 'fecha', 'tipo_nota')
+	
+# Register your models here
+
+#for name,var in notebook_models.__dict__.items():
+for name,var in models.__dict__.items():
+	if var != Nota:
+		if type(var) is ModelBase:
+			admin.site.register(var)
+			
+admin.site.register(Nota, NotaAdmin)
+
+#---------------------------------------------------------------------
+#  Para personalizar dos o mas tablas
+#---------------------------------------------------------------------
+
+import models
+
+from models import Nota
+from models import Cita
+
+class NotaAdmin(admin.ModelAdmin):
+	list_display = ('nombre', 'descripcion', 'fecha', 'tipo_nota')
+	
+class CitaAdmin(admin.ModelAdmin):
+	list_display = ('texto', 'autor')
+
+lista = ['Nota', 'Cita']
+
+for name,var in models.__dict__.items():
+	if name not in lista:
+		if type(var) is ModelBase:
+			admin.site.register(var)
+			
+admin.site.register(Nota, NotaAdmin)
+admin.site.register(Cita, CitaAdmin)
+
+7. Agregas la nueva aplicación a proyecto:
+
+[$] vim proyectos/settings.py
+
+INSTALLED_APPS = (
+	...,
+	'agenda',
+)
+
+8. Configuramos la aplicación:
+
+[$] python manage.py migrate
+
+9. Creamos el super usuario:
+
+[$] python manage.py createsuperuser
+
+10. Ejecutamos la aplicación:
+
+[$] python manage.py runserver 0.0.0.0:8000
+</article>
