@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<article xmlns='http://docbook.org/ns/docbook' version='5.0' xml:lang='en'>
+
+<section>
+<title>Fecha Por Default</title>
+En PostgreSQL tenemos:
+
+CREATE TABLE user_session(..., start_time timestamp with time zone  DEFAULT now());
+
+Esa columna correspondería algo como en Django:
+
+models.DateTimeField(default=datetime.datetime.now)
+</section>
+
+<section>
+<title>Plantillas</title>
+
+1. Habilitamos la dirección:
+
+urlpatterns = patterns('',
+	...,
+	url(r'^notas/', 'agenda.views.notas'),
+)
+
+2. Creamos el espacio de las plantillas:
+
+[$] mkdir -p agenda/templates/agenda
+
+3. Creamos la plantilla del controlador:
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Notas</title>
+	</head>
+	<body>
+		<h1>Notas</h1>
+		<table>
+			<thead>
+				<th>
+					<td>id</td>
+					<td>Nombre</td>
+					<td>Descripci&oacute;n</td>
+					<td>Fecha</td>
+					<td>Tipo</td>
+				</th>
+			</thead>
+			<tbody>
+				{% for nota in notas %}
+				<tr>
+					<td>{{ nota.id }}</td>
+					<td>{{ nota.nombre }}</td>
+					<td>{{ nota.descripcion }}</td>
+					<td>{{ nota.fecha }}</td>
+					<td>{{ nota.tipo.nombre }}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</body>
+</html>
+
+4. Habilitamos el controlador:
+
+[$] vim agenda/views.py
+
+from django.http import HttpResponse
+from django.template import RequestContext, loader
+
+# Create your views here.
+from models import Nota
+
+def notas(request):
+	template = loader.get_template("agenda/notas.html")
+
+	context = RequestContext(request, {'notas' : Nota.objects.order_by('id')})
+	return HttpResponse(template.render(context))
+</section>
+
+<section>
+<title>Imagen de las relaciones de los modelos</title>
+
+1. Instala los siguientes SlackBuilds:
+
+- gts
+- graphviz
+
+2. Instala el módulo de Python:
+
+[#] pip --verbose install pygraphviz
+
+3. Instala el módulo de Django:
+
+[#] pip --verbose install django_extensions
+
+4. Habilitalo en el proyecto:
+
+[$] vi proyectos/settings.py
+INSTALLED_APPS = (
+...,
+'django_extensions',
+)
+
+5. Sincronizas la base de datos:
+
+[$] python manage.py syncdb
+
+6. Generas la imagen:
+
+[$] python manage.py graph_models -a -g -o models.png
+</article>
