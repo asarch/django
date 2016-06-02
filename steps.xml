@@ -1,89 +1,89 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="en">
+<info>
+<author>
+<firstname>Alef Sheridan Ariel</firstname>
+<surname>Ramírez Chiñas</surname>
+</author>
+<revhistory>
 
-<article xmlns='http://docbook.org/ns/docbook' version='5.0' xml:lang='en'>
+<revision>
+<date>Thu Jun  2 14:21:08 CDT 2016</date>
+<revnumber>1.0</revnumber>
+<revremark>Finished the translation and DocBook structure.</revremark>
+<authorinitials>asarch</authorinitials>
+</revision>
 
-Ruta crítica de un nuevo proyecto
+</revhistory>
+</info>
 
-1. Crea un nuevo proyecto:
+<title>Critical path for a new Django project and application</title>
 
-[$] django-admin startproyect proyectos
+<orderedlist enumeration="arabic">
 
-2. Inicia una nueva aplicación:
+<listitem>
+<para>Create the project:</para>
 
-[$] cd proyectos
+<screen><![CDATA[[$] django-admin startproyect projects]]></screen>
+</listitem>
 
-[$] python admin.py startapp agenda
+<listitem>
+<para>Create the application:</para>
 
-3. Configura la aplicación:
+<screen><![CDATA[[$] cd projects
 
-[$] vi proyectos/settings.py
+[$] python admin.py startapp app1]]></screen>
+</listitem>
 
-SECRET_KEY = '....'
+<listitem>
+<para>Configure the project:</para>
+
+<screen><![CDATA[[$] vi projects/settings.py]]></screen>
+
+<programlisting language="python" linenumbering="numbered"><![CDATA[SECRET_KEY = '....'
 
 DATABASES = {
-	'agenda' : {
+	'app1' : {
 		'ENGINE' : 'django.db.backends.postgresql_psycopg2',
-		'NAME' : 'agenda',
-		'USER' : 'asarch',
-		'PASSWORD' : 'xxxx-xxxx',
-		'HOST' : '192.168.1.100',
+		'NAME' : 'dbname',
+		'USER' : 'user',
+		'PASSWORD' : 'host',
+		'HOST' : 'address',
 		'PORT' : '5432'
-
 	}
 }
 
 DATABASE_ROUTERS = ['projects.router.default']
 
-TIME_ZONE = 'Mexico/General'
+TIME_ZONE = 'Mexico/General']]></programlisting>
+</listitem>
 
-4. Definimos el router de las bases de datos:
+<listitem>
+<para>Enable the default database router for the project:</para>
 
-[$] vim proyectos/router.py
+<screen><![CDATA[[$] vim projects/router.py]]></screen>
 
-# In settings.py, after the databases declaration:
+<programlisting language="python" linenumbering="numbered"><![CDATA[# In settings.py, after the databases declaration:
 #
 # DATABASE_ROUTERS = ['projects.router.default']
 apps = [
-	'agenda',
-	'coleccion',
-	'imco',
-	'jafra',
-	'konigin',
-	'muebleria',
-	'muestra',
-	'slackbuild',
+    'app1',
+    'app2',
+    ...,
+    'appn',
 ]
 
 tables = [
-	# Agenda
-	'aniversario', 'cita', 'diario', 'enlace',
-	'etiqueta', 'expresion_idiomatica', 'idioma',
-	'nota', 'nota_etiqueta', 'tarea', 'tipo_aniversario',
-	'tipo_nota', 'tipo_tarea',
-
-	# Coleccion
-	'archivo', 'blu_ray', 'catalogo', 'contenido',
-	'disco', 'respaldo',
-
-	# Imco
-	'alumno', 'asistencia', 'evaluacion',
-
-	# Jafra
-	'categoria', 'cliente', 'pago', 'producto',
-	'venta', 'venta_producto',
-
-	# Konigin
-	'evento', 'comentario',
-
-	# Muebleria
-	'elemento', 'inventario', 'tipo_elemento'
-	
-	# Muestra
-	'glucosa', 'glucosa_comentario', 'paciente', 'presion',
-	
-	# Slackbuild
-	'archivo', 'listado', 'paquete', 'tipo_archivo',
-	'version_slackware'
+    # app1 tables
+    'app1_table1', 'app1_table2', ..., 'app1_tablen',
+    
+    # app2 tables
+    'app2_table1', 'app2_table2', ..., 'app2_tablen',
+    
+    ...,
+    
+    # appn tables
+    'app1_table1', 'app1_table2', ..., 'app1_tablen',
 ]
 
 class default(object):
@@ -107,113 +107,115 @@ class default(object):
 
 		return False
 
-	# From
-	# /usr/lib/python2.7/site-packages/django/db/utils.py:358:
-	# RemovedInDjango19Warning:
-	# Router.allow_syncdb has been deprecated and will stop working in Django 1.9.
-	# Rename the method to allow_migrate.
-	#  model=model,
-	#def allow_syncdb(self, db, model):
-	def allow_migrate(self, db, model):
-		if db in tables or model._meta.app_label in apps:
+	def allow_migrate(self, db, app_label, model_name=None, **hints):
+		if db in tables or model_name in apps:
 			return False
 
 		return True
 
-5. Obtenemos las tablas de la base de datos de la aplicación:
+]]></programlisting>
+</listitem>
 
-[$] python manage.py inspectdb --database=agenda | sed 's/    /\t/g' >> agenda/models.py
+<listitem>
+<para>Get the tables for the application:</para>
 
-6. Habilitamos el módulo de la administración para la aplicación:
+<screen><![CDATA[[$] python manage.py inspectdb --database=agenda | \
+sed 's/    /\t/g' >> app1/models.py]]></screen>
+</listitem>
 
-# notebook/admin.py
+<listitem>
+<para>Configure the admin.py module of the application:</para>
+
+<programlisting language="python" linenumbering="numbered"><![CDATA[# app1/admin.py
 
 #---------------------------------------------------------------------
-#  Originalmente el codigo era este:
+# First version
 #---------------------------------------------------------------------
 
 from django.contrib import admin
 from django.db.models.base import ModelBase
 
-#from pos import models as pos_models
 import models
 
-#for name,var in pos_models.__dict__.items():
 for name,var in models.__dict__.items():
 	if type(var) is ModelBase:
 		admin.site.register(var)
 
 #---------------------------------------------------------------------
-#  La forma mejorada es este ya que te permite personalizar
-#  la forma en que se muestra un modelo (en este caso, las
-#  notas del notebook).
+# Second version
 #---------------------------------------------------------------------
 
 from django.contrib import admin
 from django.db.models.base import ModelBase
 
-#from notebook import models as notebook_models
 import models
 
-from models import Nota
+from models import Student
 
-# La personalizacion se hace aqui:
-class NotaAdmin(admin.ModelAdmin):
-	list_display = ('nombre', 'descripcion', 'fecha', 'tipo_nota')
+class StudentAdmin(admin.ModelAdmin):
+	list_display = ('first_name', 'last_name')
 	
 # Register your models here
 
-#for name,var in notebook_models.__dict__.items():
 for name,var in models.__dict__.items():
 	if var != Nota:
 		if type(var) is ModelBase:
 			admin.site.register(var)
 			
-admin.site.register(Nota, NotaAdmin)
+admin.site.register(Studen, StudentAdmin)
 
 #---------------------------------------------------------------------
-#  Para personalizar dos o mas tablas
+# Third version
 #---------------------------------------------------------------------
 
 import models
 
-from models import Nota
-from models import Cita
+from models import Student
+from models import Note
 
-class NotaAdmin(admin.ModelAdmin):
-	list_display = ('nombre', 'descripcion', 'fecha', 'tipo_nota')
+class StudentAdmin(admin.ModelAdmin):
+	list_display = ('first_name', 'last_name')
 	
-class CitaAdmin(admin.ModelAdmin):
-	list_display = ('texto', 'autor')
+class NoteAdmin(admin.ModelAdmin):
+	list_display = ('text', 'date')
 
-lista = ['Nota', 'Cita']
+lista = ['Student', 'Note']
 
 for name,var in models.__dict__.items():
 	if name not in lista:
 		if type(var) is ModelBase:
 			admin.site.register(var)
 			
-admin.site.register(Nota, NotaAdmin)
-admin.site.register(Cita, CitaAdmin)
+admin.site.register(Student, StudentAdmin)
+admin.site.register(Note, NoteAdmin)]]></programlisting>
+</listitem>
 
-7. Agregas la nueva aplicación a proyecto:
+<listitem>
+<para>Enable the application in the project settings:</para>
 
-[$] vim proyectos/settings.py
+<screen><![CDATA[[$] vim projects/settings.py]]></screen>
 
-INSTALLED_APPS = (
+<programlisting language="python" linenumbering="numbered"><![CDATA[INSTALLED_APPS = (
 	...,
-	'agenda',
-)
+	'app1',
+)]]></programlisting>
+</listitem>
 
-8. Configuramos la aplicación:
+<listitem>
+<para>Initialize the application:</para>
 
-[$] python manage.py migrate
+<screen><![CDATA[[$] python manage.py migrate]]></screen>
+</listitem>
 
-9. Creamos el super usuario:
+<listitem>
+<para>Creates the application's super user:</para>
 
-[$] python manage.py createsuperuser
+<screen><![CDATA[[$] python manage.py createsuperuser]]></screen>
+</listitem>
 
-10. Ejecutamos la aplicación:
+<listitem>
+<para>Launch the project:</para>
 
-[$] python manage.py runserver 0.0.0.0:8000
+<screen><![CDATA[[$] python manage.py runserver 0.0.0.0:8000]]></screen></listitem>
+</orderedlist>
 </article>
