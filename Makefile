@@ -6,4 +6,4 @@ $(TARGET) : $(SRCS)
 
 .PHONY:
 clean:
-rm $(TARGET)
+	rm $(TARGET)
