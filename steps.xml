@@ -24,13 +24,13 @@
 <listitem>
 <para>Create the project:</para>
 
-<screen><![CDATA[[$] django-admin startproject projects]]></screen>
+<screen linenumbering="numbered"><![CDATA[[$] django-admin startproject projects]]></screen>
 </listitem>
 
 <listitem>
 <para>Create the application:</para>
 
-<screen><![CDATA[[$] cd projects
+<screen linenumbering="numbered"><![CDATA[[$] cd projects
 
 [$] python manage.py startapp app1]]></screen>
 </listitem>
@@ -38,7 +38,7 @@
 <listitem>
 <para>Configure the project:</para>
 
-<screen><![CDATA[[$] vi projects/settings.py]]></screen>
+<screen linenumbering="numbered"><![CDATA[[$] vi projects/settings.py]]></screen>
 
 <programlisting language="python" linenumbering="numbered"><![CDATA[SECRET_KEY = '....'
 
@@ -61,7 +61,7 @@ TIME_ZONE = 'Mexico/General']]></programlisting>
 <listitem>
 <para>Enable the default database router for the project:</para>
 
-<screen><![CDATA[[$] vim projects/router.py]]></screen>
+<screen linenumbering="numbered"><![CDATA[[$] vim projects/router.py]]></screen>
 
 <programlisting language="python" linenumbering="numbered"><![CDATA[# In settings.py, after the databases declaration:
 #
@@ -120,8 +120,7 @@ class default(object):
 <listitem>
 <para>Get the tables for the application:</para>
 
-<screen><![CDATA[[$] python manage.py inspectdb --database=agenda | \
-sed 's/    /\t/g' >> app1/models.py]]></screen>
+<screen linenumbering="numbered"><![CDATA[[$] python manage.py inspectdb --database=agenda | sed 's/    /\t/g' >> app1/models.py]]></screen>
 </listitem>
 
 <listitem>
@@ -194,7 +193,7 @@ admin.site.register(Note, NoteAdmin)]]></programlisting>
 <listitem>
 <para>Enable the application in the project settings:</para>
 
-<screen><![CDATA[[$] vim projects/settings.py]]></screen>
+<screen linenumbering="numbered"><![CDATA[[$] vim projects/settings.py]]></screen>
 
 <programlisting language="python" linenumbering="numbered"><![CDATA[INSTALLED_APPS = (
 	...,
@@ -205,18 +204,18 @@ admin.site.register(Note, NoteAdmin)]]></programlisting>
 <listitem>
 <para>Initialize the application:</para>
 
-<screen><![CDATA[[$] python manage.py migrate]]></screen>
+<screen linenumbering="numbered"><![CDATA[[$] python manage.py migrate]]></screen>
 </listitem>
 
 <listitem>
 <para>Creates the application's super user:</para>
 
-<screen><![CDATA[[$] python manage.py createsuperuser]]></screen>
+<screen linenumbering="numbered"><![CDATA[[$] python manage.py createsuperuser]]></screen>
 </listitem>
 
 <listitem>
 <para>Launch the project:</para>
 
-<screen><![CDATA[[$] python manage.py runserver 0.0.0.0:8000]]></screen></listitem>
+<screen linenumbering="numbered"><![CDATA[[$] python manage.py runserver 0.0.0.0:8000]]></screen></listitem>
 </orderedlist>
 </article>
