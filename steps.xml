@@ -73,6 +73,9 @@ apps = [
     'appn',
 ]
 
+# You can get the list of the tables with this:
+# psql -U user database -c "\dt" | grep table | awk '{ print "\x27" $3 "\x27""," }'
+
 tables = [
     # app1 tables
     'app1_table1', 'app1_table2', ..., 'app1_tablen',
@@ -111,9 +114,7 @@ class default(object):
 		if db in tables or model_name in apps:
 			return False
 
-		return True
-
-]]></programlisting>
+		return True]]></programlisting>
 </listitem>
 
 <listitem>
