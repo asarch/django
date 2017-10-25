@@ -24,7 +24,7 @@
 <listitem>
 <para>Create the project:</para>
 
-<screen><![CDATA[[$] django-admin startproyect projects]]></screen>
+<screen><![CDATA[[$] django-admin startproject projects]]></screen>
 </listitem>
 
 <listitem>
@@ -32,7 +32,7 @@
 
 <screen><![CDATA[[$] cd projects
 
-[$] python admin.py startapp app1]]></screen>
+[$] python manage.py startapp app1]]></screen>
 </listitem>
 
 <listitem>
