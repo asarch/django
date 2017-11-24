@@ -4,20 +4,20 @@
 
 <section>
 <title>Fecha Por Default</title>
-En PostgreSQL tenemos:
+<para>En PostgreSQL tenemos:</para>
 
-CREATE TABLE user_session(..., start_time timestamp with time zone  DEFAULT now());
+<programlisting linenumbering="numbered"><![CDATA[CREATE TABLE user_session(..., start_time timestamp with time zone  DEFAULT now());]]></programlisting>
 
-Esa columna correspondería algo como en Django:
+<para>Esa columna correspondería algo como en Django:</para>
 
-models.DateTimeField(default=datetime.datetime.now)
+<programlisting linenumbering="numbered"><![CDATA[models.DateTimeField(default=datetime.datetime.now)]]></programlisting>
 </section>
 
 <section>
 <title>Plantillas</title>
 
-1. Habilitamos la dirección:
-	<screen linenumbering="numbered"><![CDATA[$] vim projects/urls.py]]></screen>
+<para>1. Habilitamos la dirección:</para>
+<screen linenumbering="numbered"><![CDATA[$] vim projects/urls.py]]></screen>
 	
 <programlisting linenumbering="numbered"><![CDATA["""projects URL Configuration
 
