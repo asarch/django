@@ -17,19 +17,48 @@ models.DateTimeField(default=datetime.datetime.now)
 <title>Plantillas</title>
 
 1. Habilitamos la dirección:
+	<screen linenumbering="numbered"><![CDATA[$] vim projects/urls.py]]></screen>
+	
+<programlisting linenumbering="numbered"><![CDATA["""projects URL Configuration
 
-urlpatterns = patterns('',
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/1.11/topics/http/urls/
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
+Including another URLconf
+    1. Import the include() function: from django.conf.urls import url, include
+    2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
+"""
+from django.conf.urls import url, include
+from django.contrib import admin
+
+from agenda import views
+
+urlpatterns = [
+    url(r'^admin/', admin.site.urls),
+    url(r'^notas/', views.notas, name='notas'),
+]]]></programlisting>
+
+	
+<programlisting linenmbering="numbered"><![CDATA[urlpatterns = patterns('',
 	...,
 	url(r'^notas/', 'agenda.views.notas'),
-)
+)]]></programlisting>
 
 2. Creamos el espacio de las plantillas:
 
-[$] mkdir -p agenda/templates/agenda
+<screen linenumbering="numbered"><![CDATA[[$] mkdir -p agenda/templates/agenda]]></screen>
 
 3. Creamos la plantilla del controlador:
 
-<!DOCTYPE html>
+<screen linenumbering="numbered"><![CDATA[[$] vim agenda/templates/agenda/index.html]]></screen>
+	
+<programlisting linenumbering="numbered"><![CDATA[<!DOCTYPE html>
 <html>
 	<head>
 		<title>Notas</title>
@@ -59,7 +88,7 @@ urlpatterns = patterns('',
 			</tbody>
 		</table>
 	</body>
-</html>
+</html>]]></programlisting>
 
 4. Habilitamos el controlador:
 
