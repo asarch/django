@@ -44,17 +44,11 @@ urlpatterns = [
     url(r'^notas/', views.notas, name='notas'),
 ]]]></programlisting>
 
-	
-<programlisting linenmbering="numbered"><![CDATA[urlpatterns = patterns('',
-	...,
-	url(r'^notas/', 'agenda.views.notas'),
-)]]></programlisting>
-
-2. Creamos el espacio de las plantillas:
+<para>2. Creamos el espacio de las plantillas:</para>
 
 <screen linenumbering="numbered"><![CDATA[[$] mkdir -p agenda/templates/agenda]]></screen>
 
-3. Creamos la plantilla del controlador:
+<para>3. Creamos la plantilla del controlador:</para>
 
 <screen linenumbering="numbered"><![CDATA[[$] vim agenda/templates/agenda/index.html]]></screen>
 	
@@ -90,11 +84,11 @@ urlpatterns = [
 	</body>
 </html>]]></programlisting>
 
-4. Habilitamos el controlador:
+<para>4. Habilitamos el controlador:</para>
 
-[$] vim agenda/views.py
+<screen linenumbering="numbered"><![CDATA[[$] vim agenda/views.py]]></screen>
 
-from django.http import HttpResponse
+<programlisting linenumbering="numbered"><![CDATA[from django.http import HttpResponse
 from django.template import RequestContext, loader
 
 # Create your views here.
@@ -104,7 +98,7 @@ def notas(request):
 	template = loader.get_template("agenda/notas.html")
 
 	context = RequestContext(request, {'notas' : Nota.objects.order_by('id')})
-	return HttpResponse(template.render(context))
+ 	return HttpResponse(template.render(context))]]></programlisting>
 </section>
 
 <section>
