@@ -104,9 +104,9 @@ def notas(request):
 <section>
 <title>Imagen de las relaciones de los modelos</title>
 
-1. Instala los siguientes SlackBuilds:
-
-- gts
+	<orderedlist>
+		<itemizedlist><para>Instala los siguientes SlackBuilds:</para></itemizedlist>
+		- <<<listitem><para>gts</para></listitem>
 - graphviz
 
 2. Instala el módulo de Python:
@@ -132,4 +132,10 @@ INSTALLED_APPS = (
 6. Generas la imagen:
 
 [$] python manage.py graph_models -a -g -o models.png
+
+	<para>Formato moneda:</para>
+	<programlisting linenumbering="numbered"><![CDATA[from decimal import Decimal
+
+class Product(models.Model):
+    price = models.DecimalField(max_digits=8, decimal_places=2, default=Decimal('0.00'))]]></programlisting>
 </article>
