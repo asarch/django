@@ -218,4 +218,50 @@ admin.site.register(Note, NoteAdmin)]]></programlisting>
 
 <screen linenumbering="numbered"><![CDATA[[$] python manage.py runserver 0.0.0.0:8000]]></screen></listitem>
 </orderedlist>
+
+<!--
+Para agregar una nueva aplicación:
+
+1. Generas la nueva aplicación:
+
+[$] python manage.py startapp mynewapp
+
+2. Agregas el acceso a la base de datos:
+
+[$] vi projects/settigs.py
+...
+         'mynewapp' : {
+                'ENGINE' : 'django.db.backends.postgresql_psycopg2',
+                'NAME' : 'mynewdb',
+                'USER' : 'myusername',
+                'PASSWORD' : 'mypasswd',
+                'HOST' : 'myhost',
+                'PORT' : 'myport'
+        },
+}
+
+3. Creas los objetos del modelo nuevo:
+
+[$] python manage.py inspectdb --database=mynewapp | sed 's/    /\t/g' >> mynewapp/models.py
+
+4. Agregas la nueva base de datos al router de bases de datos de la aplicación:
+
+[$] vi projects/router.py
+
+apps = [
+    ...,
+    'mynewapp'
+]
+
+tables = [
+    ...,
+    # My new app
+    'table1',
+    'table2',
+    ...
+]
+
+5. Habilitas el módulo de la administración de la nueva aplicacion y listo.
+-->
+	
 </article>
